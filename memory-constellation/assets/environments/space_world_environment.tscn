@@ -1,0 +1,8 @@
+[gd_scene format=3 uid="uid://g07aretgss8f"]
+
+[sub_resource type="Environment" id="Environment_ah14t"]
+background_energy_multiplier = 0.0
+ambient_light_energy = 0.0
+
+[node name="SpaceWorldEnvironment" type="WorldEnvironment" unique_id=739102183]
+environment = SubResource("Environment_ah14t")

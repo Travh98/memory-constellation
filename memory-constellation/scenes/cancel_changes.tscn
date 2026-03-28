@@ -1,0 +1,28 @@
+[gd_scene format=3 uid="uid://xpcgk3c3ggum"]
+
+[ext_resource type="Script" uid="uid://wm5rve801udl" path="res://scripts/pointer_body.gd" id="1_77lyo"]
+[ext_resource type="Script" uid="uid://ca6u83npvpox5" path="res://scripts/cancel_changes.gd" id="1_wwpox"]
+[ext_resource type="PackedScene" uid="uid://cymteydkxagpp" path="res://addons/godot-xr-tools/misc/hold_button.tscn" id="2_wwpox"]
+
+[sub_resource type="SphereShape3D" id="SphereShape3D_0q3k8"]
+
+[node name="CancelChanges" type="Node3D" unique_id=177954962]
+script = ExtResource("1_wwpox")
+
+[node name="PointerBody" type="StaticBody3D" parent="." unique_id=658340530]
+collision_layer = 1048576
+collision_mask = 0
+script = ExtResource("1_77lyo")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="PointerBody" unique_id=4169751]
+shape = SubResource("SphereShape3D_0q3k8")
+
+[node name="HoldButton" parent="." unique_id=541633701 instance=ExtResource("2_wwpox")]
+transform = Transform3D(2.5, 0, 0, 0, 2.5, 0, 0, 0, 2.5, 0, 0, 0)
+hold_time = 1.0
+size = Vector2(0.5, 0.5)
+
+[node name="Label3D" type="Label3D" parent="." unique_id=48832760]
+billboard = 1
+text = "CANCEL
+CHANGES"

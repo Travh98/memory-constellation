@@ -1,0 +1,6 @@
+[gd_scene format=3 uid="uid://wr4v0vkfdh36"]
+
+[ext_resource type="Script" uid="uid://cirufq6rf3cco" path="res://scripts/constellation_view.gd" id="Script_cv"]
+
+[node name="ConstellationView" type="Node3D" unique_id=920964482]
+script = ExtResource("Script_cv")

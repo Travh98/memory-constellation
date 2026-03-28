@@ -1,0 +1,11 @@
+[gd_scene format=3 uid="uid://bbnari6tf0ygr"]
+
+[ext_resource type="Material" uid="uid://bg72m5hs3lx1" path="res://assets/materials/transparent_white.material" id="1_hvllg"]
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_hvllg"]
+material = ExtResource("1_hvllg")
+
+[node name="MaterialTest" type="Node3D" unique_id=474212932]
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="." unique_id=811396423]
+mesh = SubResource("CylinderMesh_hvllg")

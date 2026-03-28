@@ -1,0 +1,10 @@
+[gd_scene format=3 uid="uid://dkkrurl0wbwgf"]
+
+[ext_resource type="Material" path="res://addons/godot-xr-tools/objects/highlight/highlight_ring.tres" id="1_wujlh"]
+
+[sub_resource type="QuadMesh" id="1"]
+size = Vector2(0.05, 0.05)
+
+[node name="HighlightRingDumb" type="MeshInstance3D" unique_id=208302967]
+mesh = SubResource("1")
+surface_material_override/0 = ExtResource("1_wujlh")

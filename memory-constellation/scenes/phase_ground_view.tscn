@@ -1,0 +1,92 @@
+[gd_scene format=3 uid="uid://ce8a078e1mdc7"]
+
+[ext_resource type="Shader" uid="uid://dwrjbps61rkfu" path="res://assets/shaders/jet_thruster.gdshader" id="3_3oupn"]
+[ext_resource type="PackedScene" uid="uid://n7tua1yn37na" path="res://scenes/to_constellation.tscn" id="3_ui7gm"]
+[ext_resource type="PackedScene" uid="uid://cerr3ky3i5yrs" path="res://scenes/reset_positions.tscn" id="5_l3j8g"]
+[ext_resource type="PackedScene" uid="uid://xpcgk3c3ggum" path="res://scenes/cancel_changes.tscn" id="6_08e16"]
+[ext_resource type="Script" uid="uid://dil8pmenfwf7n" path="res://scripts/phase_ground_view.gd" id="Script_pgv"]
+
+[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_3oupn"]
+sky_horizon_color = Color(0.66224277, 0.6717428, 0.6867428, 1)
+ground_horizon_color = Color(0.66224277, 0.6717428, 0.6867428, 1)
+
+[sub_resource type="Sky" id="Sky_ui7gm"]
+sky_material = SubResource("ProceduralSkyMaterial_3oupn")
+
+[sub_resource type="Environment" id="Environment_l3j8g"]
+background_mode = 2
+sky = SubResource("Sky_ui7gm")
+tonemap_mode = 2
+glow_enabled = true
+
+[sub_resource type="Gradient" id="Gradient_ui7gm"]
+offsets = PackedFloat32Array(0, 0.15300547, 0.40983605, 0.55737704, 0.6939891, 0.8469945, 1)
+colors = PackedColorArray(0.89344263, 0.89344263, 0.89344263, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0.8659794, 0.8659794, 0.8659794, 1, 0, 0, 0, 1, 0, 0, 0, 1, 1, 1, 1, 1)
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_l3j8g"]
+noise_type = 3
+seed = 2
+frequency = 0.0121
+fractal_weighted_strength = 0.77
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_08e16"]
+width = 2048
+height = 2048
+noise = SubResource("FastNoiseLite_l3j8g")
+color_ramp = SubResource("Gradient_ui7gm")
+seamless = true
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_klwot"]
+render_priority = 0
+shader = ExtResource("3_3oupn")
+shader_parameter/main_color = Color(0.07767937, 0.5024342, 0.5316134, 1)
+shader_parameter/noise_texture = SubResource("NoiseTexture2D_08e16")
+shader_parameter/emission = Color(0.011004359, 0.08902142, 0.076971196, 1)
+shader_parameter/emission_energy = 5.0
+shader_parameter/scroll_speed = 0.01
+shader_parameter/alpha_threshold = 0.0
+shader_parameter/use_threshold = false
+shader_parameter/invert_boost_direction = true
+shader_parameter/fade_emission = true
+shader_parameter/fade_mode = 0
+shader_parameter/fade_softness = 0.40010001899747
+shader_parameter/cylinder_half_height = 25.0000011875
+shader_parameter/cylinder_fade_bottom = 10.0
+shader_parameter/cylinder_fade_top = 10.0
+shader_parameter/box_half_extents = Vector3(0.5, 0.005, 0.5)
+shader_parameter/box_fade_x_neg = 0.12
+shader_parameter/box_fade_x_pos = 0.12
+shader_parameter/box_fade_z_neg = 0.12
+shader_parameter/box_fade_z_pos = 0.12
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_ui7gm"]
+material = SubResource("ShaderMaterial_klwot")
+flip_faces = true
+top_radius = 25.0
+bottom_radius = 25.0
+height = 100.0
+cap_top = false
+cap_bottom = false
+
+[node name="PhaseGroundView" type="Node3D" unique_id=1188927062]
+script = ExtResource("Script_pgv")
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="." unique_id=1013947762]
+transform = Transform3D(-0.8660254, -0.43301278, 0.25, 0, 0.49999997, 0.86602545, -0.50000006, 0.75, -0.43301266, 0, 0, 0)
+shadow_enabled = true
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=417447937]
+environment = SubResource("Environment_l3j8g")
+
+[node name="BubbleEdges" type="MeshInstance3D" parent="." unique_id=27174089]
+sorting_offset = -10.0
+mesh = SubResource("CylinderMesh_ui7gm")
+
+[node name="ToConstellation" parent="." unique_id=199219533 instance=ExtResource("3_ui7gm")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 6, 0)
+
+[node name="ResetPositions" parent="." unique_id=221974282 instance=ExtResource("5_l3j8g")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4, 0, 0)
+
+[node name="CancelChanges" parent="." unique_id=177954962 instance=ExtResource("6_08e16")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4, 0, 1)

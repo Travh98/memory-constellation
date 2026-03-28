@@ -1,0 +1,25 @@
+[gd_scene format=3 uid="uid://b5uw65vjbrfqx"]
+
+[ext_resource type="Texture2D" uid="uid://bgmtac2krlg67" path="res://assets/textures/cardboard.png" id="1_uecpb"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_raltb"]
+shading_mode = 0
+disable_ambient_light = true
+disable_fog = true
+disable_specular_occlusion = true
+albedo_texture = ExtResource("1_uecpb")
+uv1_offset = Vector3(0.5, 0.5, 0.5)
+uv1_triplanar = true
+
+[sub_resource type="BoxMesh" id="BoxMesh_vjmvp"]
+material = SubResource("StandardMaterial3D_raltb")
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_uecpb"]
+
+[node name="TestBox" type="StaticBody3D" unique_id=698220457]
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="." unique_id=777410875]
+mesh = SubResource("BoxMesh_vjmvp")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="." unique_id=349582103]
+shape = SubResource("BoxShape3D_uecpb")

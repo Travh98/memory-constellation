@@ -1,0 +1,30 @@
+[gd_scene format=3 uid="uid://n7tua1yn37na"]
+
+[ext_resource type="Script" uid="uid://wm5rve801udl" path="res://scripts/pointer_body.gd" id="1_cmpeu"]
+[ext_resource type="Script" uid="uid://dxa6vsyksfo2l" path="res://scripts/to_constellation.gd" id="1_kve6o"]
+[ext_resource type="PackedScene" uid="uid://cymteydkxagpp" path="res://addons/godot-xr-tools/misc/hold_button.tscn" id="2_kve6o"]
+
+[sub_resource type="CylinderShape3D" id="CylinderShape3D_08e16"]
+height = 1.0
+radius = 2.0
+
+[node name="ToConstellation" type="Node3D" unique_id=199219533]
+script = ExtResource("1_kve6o")
+
+[node name="PointerBody" type="StaticBody3D" parent="." unique_id=1714760592]
+collision_layer = 1048576
+collision_mask = 0
+script = ExtResource("1_cmpeu")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="PointerBody" unique_id=1863905717]
+shape = SubResource("CylinderShape3D_08e16")
+
+[node name="HoldButton" parent="." unique_id=541633701 instance=ExtResource("2_kve6o")]
+transform = Transform3D(5, 0, 0, 0, 5, 0, 0, 0, 5, 0, 0, 0)
+hold_time = 1.0
+size = Vector2(0.5, 0.5)
+
+[node name="Label3D" type="Label3D" parent="." unique_id=106200188]
+pixel_size = 0.02
+billboard = 1
+text = "RETURN"

@@ -1,0 +1,29 @@
+[gd_scene format=3 uid="uid://cerr3ky3i5yrs"]
+
+[ext_resource type="Script" uid="uid://wm5rve801udl" path="res://scripts/pointer_body.gd" id="1_c6x7w"]
+[ext_resource type="Script" uid="uid://414ivar7lb8o" path="res://scripts/reset_positions.gd" id="1_sg3um"]
+[ext_resource type="PackedScene" uid="uid://cymteydkxagpp" path="res://addons/godot-xr-tools/misc/hold_button.tscn" id="2_sg3um"]
+
+[sub_resource type="SphereShape3D" id="SphereShape3D_7m80l"]
+
+[node name="ResetPositions" type="Node3D" unique_id=221974282]
+script = ExtResource("1_sg3um")
+
+[node name="PointerBody" type="StaticBody3D" parent="." unique_id=675239783]
+collision_layer = 1048576
+collision_mask = 0
+script = ExtResource("1_c6x7w")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="PointerBody" unique_id=884264522]
+shape = SubResource("SphereShape3D_7m80l")
+
+[node name="HoldButton" parent="." unique_id=541633701 instance=ExtResource("2_sg3um")]
+transform = Transform3D(2.5, 0, 0, 0, 2.5, 0, 0, 0, 2.5, 0, 0, 0)
+hold_time = 3.0
+color = Color(1, 0.26785713, 0.26268303, 1)
+size = Vector2(0.5, 0.5)
+
+[node name="Label3D" type="Label3D" parent="." unique_id=1090813345]
+billboard = 1
+text = "RESET
+POSITIONS"

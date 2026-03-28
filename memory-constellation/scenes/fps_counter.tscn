@@ -1,0 +1,11 @@
+[gd_scene format=3 uid="uid://gnokyf60i8mx"]
+
+[ext_resource type="Script" uid="uid://cbjcc4rni1v2x" path="res://scripts/FPSCounter.gd" id="1_u321x"]
+
+[node name="FPSCounter" type="Label" unique_id=1968365028]
+offset_left = 5.0
+offset_top = 5.0
+offset_right = 56.0
+offset_bottom = 31.0
+text = "fps: 60"
+script = ExtResource("1_u321x")

@@ -1,0 +1,13 @@
+[gd_scene format=3 uid="uid://c4iesnlrjdukt"]
+
+[ext_resource type="Material" uid="uid://dai4q0hid8oqb" path="res://assets/materials/phase_bridge.material" id="1_fj72h"]
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_bd2y7"]
+cap_top = false
+cap_bottom = false
+
+[node name="Node3D" type="Node3D" unique_id=407476734]
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="." unique_id=879908377]
+mesh = SubResource("CylinderMesh_bd2y7")
+surface_material_override/0 = ExtResource("1_fj72h")

@@ -1,0 +1,111 @@
+[gd_scene format=3 uid="uid://d3uugjvvhto0c"]
+
+[ext_resource type="PackedScene" uid="uid://wr4v0vkfdh36" path="res://scenes/constellation_view.tscn" id="2_ni5ms"]
+[ext_resource type="PackedScene" uid="uid://b460mqblukm4u" path="res://scenes/vr_player.tscn" id="3_jb3nc"]
+[ext_resource type="Script" uid="uid://ces1j6plojyra" path="res://addons/godot-xr-tools/xr/start_xr.gd" id="4_iusj4"]
+[ext_resource type="PackedScene" uid="uid://wtpox7m5vu2b" path="res://addons/godot-xr-tools/effects/fade.tscn" id="5_iusj4"]
+[ext_resource type="PackedScene" uid="uid://b5uw65vjbrfqx" path="res://scenes/test_box.tscn" id="6_a1rh6"]
+[ext_resource type="Shader" uid="uid://c78p1i1b4j58p" path="res://scenes/stationary_star_skybox.gdshader" id="6_melsq"]
+[ext_resource type="Material" uid="uid://cuahsriy3st7f" path="res://assets/materials/transparent_floor.tres" id="8_melsq"]
+[ext_resource type="Script" uid="uid://bh6bi0kaqkb0v" path="res://scripts/game_modes.gd" id="10_5dyip"]
+[ext_resource type="PackedScene" uid="uid://ce8a078e1mdc7" path="res://scenes/phase_ground_view.tscn" id="11_melsq"]
+[ext_resource type="Script" path="res://scripts/constellation_presenter.gd" id="12_cstpr"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_a1rh6"]
+size = Vector3(1000, 1, 1000)
+
+[sub_resource type="BoxMesh" id="BoxMesh_ylec3"]
+material = ExtResource("8_melsq")
+size = Vector3(1000, 1, 1000)
+
+[sub_resource type="SphereMesh" id="SphereMesh_5dyip"]
+flip_faces = true
+radius = 50.0
+height = 100.0
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_5dyip"]
+shader = ExtResource("6_melsq")
+shader_parameter/vertical_sections = 21
+shader_parameter/star_size = 1.26
+shader_parameter/star_falloff = 4.07
+shader_parameter/margin = 0.05
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_1brn0"]
+shader = ExtResource("6_melsq")
+shader_parameter/vertical_sections = 21
+shader_parameter/star_size = 0.01
+shader_parameter/star_falloff = 4.0
+shader_parameter/margin = 0.05
+
+[sub_resource type="Sky" id="Sky_melsq"]
+sky_material = SubResource("ShaderMaterial_1brn0")
+
+[sub_resource type="Environment" id="Environment_5dyip"]
+background_mode = 2
+sky = SubResource("Sky_melsq")
+
+[node name="GameRoot" type="Node3D" unique_id=370150307]
+
+[node name="VR_Basics" type="Node3D" parent="." unique_id=414555737]
+
+[node name="VrPlayer" parent="VR_Basics" unique_id=559408407 instance=ExtResource("3_jb3nc")]
+transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, 0, 0, 0)
+
+[node name="XRToolsStartXR" type="Node" parent="VR_Basics" unique_id=1191820859]
+script = ExtResource("4_iusj4")
+metadata/_custom_type_script = "uid://ces1j6plojyra"
+
+[node name="Fade" parent="VR_Basics" unique_id=2037674878 instance=ExtResource("5_iusj4")]
+visible = false
+
+[node name="GlobalWorldSetup" type="Node3D" parent="." unique_id=1812431337]
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="GlobalWorldSetup" unique_id=60389147]
+shadow_enabled = true
+
+[node name="WorldFloor" type="Node3D" parent="GlobalWorldSetup" unique_id=1874923520]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1, 0)
+
+[node name="StaticBody3D" type="StaticBody3D" parent="GlobalWorldSetup/WorldFloor" unique_id=413455014]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="GlobalWorldSetup/WorldFloor/StaticBody3D" unique_id=475003483]
+shape = SubResource("BoxShape3D_a1rh6")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="GlobalWorldSetup/WorldFloor/StaticBody3D" unique_id=1834934184]
+mesh = SubResource("BoxMesh_ylec3")
+
+[node name="Stars" type="Node3D" parent="GlobalWorldSetup" unique_id=741043204]
+visible = false
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="GlobalWorldSetup/Stars" unique_id=1492169018]
+mesh = SubResource("SphereMesh_5dyip")
+surface_material_override/0 = SubResource("ShaderMaterial_5dyip")
+
+[node name="StationaryStarsWorldEnvironment" type="WorldEnvironment" parent="GlobalWorldSetup" unique_id=1610171881]
+environment = SubResource("Environment_5dyip")
+
+[node name="TestObjects" type="Node3D" parent="." unique_id=1035786935]
+transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, -1, 0, 0)
+
+[node name="TestBox" parent="TestObjects" unique_id=698220457 instance=ExtResource("6_a1rh6")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8.742277e-08, 0, -4)
+
+[node name="TestBox4" parent="TestObjects" unique_id=326669841 instance=ExtResource("6_a1rh6")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.5632247, 1, -4.6328998)
+
+[node name="TestBox3" parent="TestObjects" unique_id=372058544 instance=ExtResource("6_a1rh6")]
+transform = Transform3D(0.97719777, 0, -0.21233118, 0, 1, 0, 0.21233118, 0, 0.97719777, -0.21046002, 0, -5.1648235)
+
+[node name="TestBox2" parent="TestObjects" unique_id=343619029 instance=ExtResource("6_a1rh6")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.99999994, 0, -4.211053)
+
+[node name="GameModes" type="Node3D" parent="." unique_id=1763790896]
+script = ExtResource("10_5dyip")
+
+[node name="ConstellationPresenter" type="Node" parent="GameModes" unique_id=111000001]
+script = ExtResource("12_cstpr")
+
+[node name="ConstellationView" parent="GameModes" unique_id=920964482 instance=ExtResource("2_ni5ms")]
+
+[node name="PhaseGroundView" parent="GameModes" unique_id=1188927062 instance=ExtResource("11_melsq")]
+visible = false

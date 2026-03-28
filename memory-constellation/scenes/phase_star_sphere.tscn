@@ -1,0 +1,58 @@
+[gd_scene format=3 uid="uid://cauph6mcag2ge"]
+
+[ext_resource type="Material" uid="uid://c4hqwta7415n2" path="res://assets/materials/phase_sphere.material" id="2_grivk"]
+[ext_resource type="PackedScene" uid="uid://cymteydkxagpp" path="res://addons/godot-xr-tools/misc/hold_button.tscn" id="HoldButton_pss"]
+[ext_resource type="Script" uid="uid://mdw7adxp2w3x" path="res://scripts/phase_star_sphere.gd" id="Script_pss"]
+[ext_resource type="Script" uid="uid://wm5rve801udl" path="res://scripts/pointer_body.gd" id="Script_ptrbdy"]
+
+[sub_resource type="SphereMesh" id="SphereMesh_grivk"]
+radius = 0.25
+height = 0.5
+
+[sub_resource type="SphereShape3D" id="SphereShape3D_ptrbdy"]
+radius = 0.25
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_aca8j"]
+transparency = 1
+shading_mode = 0
+disable_ambient_light = true
+disable_fog = true
+disable_specular_occlusion = true
+albedo_color = Color(1, 1, 1, 0.19607843)
+disable_receive_shadows = true
+billboard_mode = 2
+
+[sub_resource type="QuadMesh" id="QuadMesh_3ihb5"]
+material = SubResource("StandardMaterial3D_aca8j")
+size = Vector2(0.01, 0.5)
+
+[node name="PhaseStarSphere" type="Node3D" unique_id=81629727]
+script = ExtResource("Script_pss")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="." unique_id=191428767]
+mesh = SubResource("SphereMesh_grivk")
+surface_material_override/0 = ExtResource("2_grivk")
+
+[node name="PointerBody" type="StaticBody3D" parent="." unique_id=312084471]
+collision_layer = 1048576
+collision_mask = 0
+script = ExtResource("Script_ptrbdy")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="PointerBody" unique_id=312084472]
+shape = SubResource("SphereShape3D_ptrbdy")
+
+[node name="HoldButton" parent="." unique_id=1079623630 instance=ExtResource("HoldButton_pss")]
+transform = Transform3D(2, 0, 0, 0, 2, 0, 0, 0, 2, 0, 0, 0)
+hold_time = 1.0
+size = Vector2(0.5, 0.5)
+
+[node name="NamePoleBase" type="Node3D" parent="." unique_id=1172333091]
+
+[node name="NameLabel" type="Label3D" parent="NamePoleBase" unique_id=1208437097]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.54949474, 0)
+billboard = 2
+text = "sphere label"
+
+[node name="PoleMesh" type="MeshInstance3D" parent="NamePoleBase/NameLabel" unique_id=2135025183]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.33273697, 0)
+mesh = SubResource("QuadMesh_3ihb5")

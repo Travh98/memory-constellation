@@ -1,0 +1,2 @@
+# Exclude documentation assets from git archive (GitHub ZIP downloads / releases)
+documentation/ export-ignore
