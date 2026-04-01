@@ -213,6 +213,15 @@ func save_video_positions(phase: PhaseModel, video_positions: Array) -> void:
 	save_phase(phase)
 
 
+func browser_position_dict(phase: PhaseModel) -> Dictionary:
+	return phase.browser_position
+
+
+func save_browser_position(phase: PhaseModel, data: Dictionary) -> void:
+	phase.browser_position = data
+	save_phase(phase)
+
+
 func load_session() -> Dictionary:
 	if not FileAccess.file_exists(SESSION_FILE):
 		return {}

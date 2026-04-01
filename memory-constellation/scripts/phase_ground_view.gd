@@ -21,17 +21,23 @@ const VIDEO_POOL_SIZE: int = 5
 const VIDEO_ARC_RADIUS: float = 2.5
 const VIDEO_ARC_HEIGHT: float = 1.3
 const VIDEO_ARC_HALF_ANGLE_DEG: float = 60.0
+const BROWSER_FRAME_SCENE: PackedScene = preload("res://scenes/browser_frame.tscn")
+const BROWSER_DEFAULT_POSITION: Vector3 = Vector3(0.0, 1.5, -1.8)
 
 
 var _pool: Array[PhotoFrame] = []
 var _portal_pool: Array[NextPhasePortal] = []
 var _note_pool: Array[NoteFrame] = []
 var _video_pool: Array[VideoFrame] = []
+var _browser_pool: Array[BrowserFrame] = []
 var _loaded_textures: Array[ImageTexture] = []
 var _active_phase: PhaseModel = null
 var _active_photo_names: Array[String] = []
 var _active_note_count: int = 0
 var _active_video_names: Array[String] = []
+var _browser_active: bool = false
+# Node typed as Node so the project parses without GDCef installed.
+var _cef: Node = null
 
 
 func _ready() -> void:
@@ -59,6 +65,17 @@ func _ready() -> void:
 		add_child(video_frame)
 		video_frame.deactivate()
 		_video_pool.append(video_frame)
+
+	var browser_frame: BrowserFrame = BROWSER_FRAME_SCENE.instantiate() as BrowserFrame
+	add_child(browser_frame)
+	browser_frame.deactivate()
+	_browser_pool.append(browser_frame)
+
+	if ClassDB.class_exists("GDCef"):
+		_cef = ClassDB.instantiate("GDCef")
+		add_child(_cef)
+	else:
+		push_warning("PhaseGroundView: GDCef addon not installed — browser frames will not display. See https://github.com/Lecrapouille/gdcef")
 
 
 func load_phase(phase: PhaseModel) -> void:
@@ -93,6 +110,7 @@ func load_phase(phase: PhaseModel) -> void:
 
 	_load_notes(phase)
 	_load_videos(phase)
+	_load_browser(phase)
 	_load_portals(phase)
 
 
@@ -106,6 +124,7 @@ func unload_phase(do_save: bool) -> void:
 		_save_photo_positions()
 		_save_note_positions()
 		_save_video_positions()
+		_save_browser_position()
 	for frame: PhotoFrame in _pool:
 		frame.deactivate()
 	for portal: NextPhasePortal in _portal_pool:
@@ -114,10 +133,12 @@ func unload_phase(do_save: bool) -> void:
 		note_frame.deactivate()
 	for video_frame: VideoFrame in _video_pool:
 		video_frame.deactivate()
+	_browser_pool[0].deactivate()
 	_loaded_textures.clear()
 	_active_photo_names.clear()
 	_active_note_count = 0
 	_active_video_names.clear()
+	_browser_active = false
 
 
 func _load_notes(phase: PhaseModel) -> void:
@@ -179,6 +200,39 @@ func _save_video_positions() -> void:
 			"scale": _vec3_to_dict(Vector3.ONE * video_frame.scalable_scale),
 		})
 	GlobalCollections.phase_repository.save_video_positions(_active_phase, videos)
+
+
+func _load_browser(phase: PhaseModel) -> void:
+	_browser_active = false
+	if phase.playlist_link.is_empty():
+		return
+	var frame: BrowserFrame = _browser_pool[0]
+	var saved: Dictionary = GlobalCollections.phase_repository.browser_position_dict(phase)
+	if saved.is_empty():
+		frame.position = BROWSER_DEFAULT_POSITION
+		frame.basis = Basis.looking_at(BROWSER_DEFAULT_POSITION.normalized(), Vector3.UP)
+		frame.scalable_scale = 1.0
+		frame.freeze = true
+		frame.frame_two_hand_scaler.apply_scale()
+	else:
+		frame.position = _vec3_from_dict(saved.get("position", {}))
+		frame.rotation = _vec3_from_dict(saved.get("rotation", {}))
+		frame.scalable_scale = saved.get("scale", Vector3.ONE).x
+		frame.freeze = true
+		frame.frame_two_hand_scaler.apply_scale()
+	frame.activate(phase.playlist_link, _cef)
+	_browser_active = true
+
+
+func _save_browser_position() -> void:
+	if _active_phase == null or not _browser_active:
+		return
+	var frame: BrowserFrame = _browser_pool[0]
+	GlobalCollections.phase_repository.save_browser_position(_active_phase, {
+		"position": _vec3_to_dict(frame.position),
+		"rotation": _vec3_to_dict(frame.rotation),
+		"scale": _vec3_to_dict(Vector3.ONE * frame.scalable_scale),
+	})
 
 
 func _scan_videos(folder_path: String) -> Array[String]:

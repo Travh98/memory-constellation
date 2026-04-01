@@ -26,6 +26,8 @@ var _left_pointed_frame: XRToolsPickable = null
 var _right_pointed_frame: XRToolsPickable = null
 var _left_grip_held: bool = false
 var _right_grip_held: bool = false
+var _left_hit_position: Vector3 = Vector3.ZERO
+var _right_hit_position: Vector3 = Vector3.ZERO
 
 
 func _ready() -> void:
@@ -77,9 +79,20 @@ func _update_pointing(controller: XRController3D, is_left: bool) -> void:
 		return
 
 	var current_frame: XRToolsPickable = _left_pointed_frame if is_left else _right_pointed_frame
-	var hit_frame: XRToolsPickable = _raycast_for_frame(controller)
+	var hit_result: Dictionary = _raycast_result(controller)
+	var hit_frame: XRToolsPickable = null
+	var hit_pos: Vector3 = Vector3.ZERO
+	if not hit_result.is_empty():
+		hit_frame = hit_result.get("collider") as XRToolsPickable
+		hit_pos = hit_result.get("position", Vector3.ZERO)
 
 	if hit_frame == current_frame:
+		if hit_frame != null and hit_frame.has_method("send_mouse_position"):
+			hit_frame.call("send_mouse_position", hit_pos)
+		if is_left:
+			_left_hit_position = hit_pos
+		else:
+			_right_hit_position = hit_pos
 		return
 
 	if current_frame != null:
@@ -99,6 +112,12 @@ func _update_pointing(controller: XRController3D, is_left: bool) -> void:
 			remote.on_remote_hover_start(controller)
 			remote.set_gizmo(remote_grab_gizmo)
 			_set_pointer_enabled(controller, false)
+		if hit_frame.has_method("send_mouse_position"):
+			hit_frame.call("send_mouse_position", hit_pos)
+		if is_left:
+			_left_hit_position = hit_pos
+		else:
+			_right_hit_position = hit_pos
 
 
 func _clear_hand(controller: XRController3D, is_left: bool) -> void:
@@ -121,14 +140,18 @@ func _clear_hand(controller: XRController3D, is_left: bool) -> void:
 		_right_grip_held = false
 
 
-func _raycast_for_frame(controller: XRController3D) -> XRToolsPickable:
+func _raycast_result(controller: XRController3D) -> Dictionary:
 	var space_state: PhysicsDirectSpaceState3D = controller.get_world_3d().direct_space_state
 	var from: Vector3 = controller.global_position
 	var aim_direction: Vector3 = -controller.global_transform.basis.z
 	var to: Vector3 = from + aim_direction * raycast_distance
 	var query: PhysicsRayQueryParameters3D = PhysicsRayQueryParameters3D.create(
 		from, to, photo_frame_collision_mask)
-	var result: Dictionary = space_state.intersect_ray(query)
+	return space_state.intersect_ray(query)
+
+
+func _raycast_for_frame(controller: XRController3D) -> XRToolsPickable:
+	var result: Dictionary = _raycast_result(controller)
 	if result.is_empty():
 		return null
 	return result.get("collider") as XRToolsPickable
@@ -144,6 +167,10 @@ func _get_remote_grab(frame: XRToolsPickable) -> BaseFrameRemoteGrab:
 func _on_left_button_pressed(button: String) -> void:
 	if button == "ax_button":
 		is_hands_in_edit_mode = not is_hands_in_edit_mode
+		return
+	if button == "trigger_click" and is_hands_in_edit_mode:
+		if _left_pointed_frame != null and _left_pointed_frame.has_method("send_mouse_click"):
+			_left_pointed_frame.call("send_mouse_click", _left_hit_position, true)
 		return
 	if button != "grip_click" or not is_hands_in_edit_mode:
 		return
@@ -166,6 +193,10 @@ func _on_left_button_pressed(button: String) -> void:
 
 
 func _on_left_button_released(button: String) -> void:
+	if button == "trigger_click":
+		if _left_pointed_frame != null and _left_pointed_frame.has_method("send_mouse_click"):
+			_left_pointed_frame.call("send_mouse_click", _left_hit_position, false)
+		return
 	if button != "grip_click":
 		return
 	_left_grip_held = false
@@ -179,6 +210,10 @@ func _on_left_button_released(button: String) -> void:
 func _on_right_button_pressed(button: String) -> void:
 	if button == "by_button":
 		is_hands_in_edit_mode = not is_hands_in_edit_mode
+		return
+	if button == "trigger_click" and is_hands_in_edit_mode:
+		if _right_pointed_frame != null and _right_pointed_frame.has_method("send_mouse_click"):
+			_right_pointed_frame.call("send_mouse_click", _right_hit_position, true)
 		return
 	if button != "grip_click" or not is_hands_in_edit_mode:
 		return
@@ -201,6 +236,10 @@ func _on_right_button_pressed(button: String) -> void:
 
 
 func _on_right_button_released(button: String) -> void:
+	if button == "trigger_click":
+		if _right_pointed_frame != null and _right_pointed_frame.has_method("send_mouse_click"):
+			_right_pointed_frame.call("send_mouse_click", _right_hit_position, false)
+		return
 	if button != "grip_click":
 		return
 	_right_grip_held = false

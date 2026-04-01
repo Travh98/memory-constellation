@@ -2,7 +2,8 @@
   "permissions": {
     "allow": [
       "Bash(find /c/Users/Travis/source/repos/memory-constellation -name .env* -o -name *.env)",
-      "Bash(find /c/Users/Travis/source/repos/memory-constellation -type f \\\\\\(-name *.md -o -name *.txt -o -name *.json \\\\\\))"
+      "Bash(find /c/Users/Travis/source/repos/memory-constellation -type f \\\\\\(-name *.md -o -name *.txt -o -name *.json \\\\\\))",
+      "Bash(xargs grep:*)"
     ]
   }
 }

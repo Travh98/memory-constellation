@@ -1,0 +1,45 @@
+[gd_scene format=3 uid="uid://cxp3n5bvf7r2m"]
+
+[ext_resource type="PackedScene" uid="uid://bvf5t3r2nq8kf" path="res://scenes/base_frame.tscn" id="1_base"]
+[ext_resource type="Script" path="res://scripts/browser_frame.gd" id="2_bf"]
+[ext_resource type="Script" path="res://scripts/browser_frame_two_hand_scaler.gd" id="3_bfs"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_bf"]
+size = Vector3(0.853, 0.48, 0.01)
+
+[sub_resource type="QuadMesh" id="QuadMesh_bf"]
+resource_local_to_scene = true
+size = Vector2(0.853, 0.48)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_bf"]
+resource_local_to_scene = true
+cull_mode = 2
+shading_mode = 0
+texture_filter = 1
+disable_receive_shadows = true
+
+[node name="BrowserFrame" instance=ExtResource("1_base")]
+script = ExtResource("2_bf")
+
+[node name="CollisionShape3D" parent="."]
+shape = SubResource("BoxShape3D_bf")
+
+[node name="Screen" type="MeshInstance3D" parent="." unique_id=2]
+sorting_offset = 10.0
+mesh = SubResource("QuadMesh_bf")
+surface_material_override/0 = SubResource("StandardMaterial3D_bf")
+
+[node name="GrabPointHandLeft" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.324, 0.221, 0)
+
+[node name="GrabPointHandRight" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.367, 0.221, 0)
+
+[node name="GrabPointHandLeft2" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.324, -0.021, 0)
+
+[node name="GrabPointHandRight2" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.367, -0.021, 0)
+
+[node name="FrameTwoHandScaler" parent="."]
+script = ExtResource("3_bfs")
