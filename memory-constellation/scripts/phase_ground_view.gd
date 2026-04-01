@@ -6,6 +6,7 @@ const POOL_SIZE: int = 40
 const PHOTO_FRAME_SCENE: PackedScene = preload("res://scenes/photo_frame.tscn")
 const NEXT_PHASE_PORTAL_SCENE: PackedScene = preload("res://scenes/next_phase_portal.tscn")
 const NOTE_FRAME_SCENE: PackedScene = preload("res://scenes/note_frame.tscn")
+const VIDEO_FRAME_SCENE: PackedScene = preload("res://scenes/video_frame.tscn")
 const NOTE_POOL_SIZE: int = 10
 const NOTE_ARC_RADIUS: float = 1.4
 const NOTE_ARC_HEIGHT: float = 2.1
@@ -16,15 +17,21 @@ const ARC_HALF_ANGLE_DEG: float = 80.0
 const PORTAL_POOL_SIZE: int = 8
 const PORTAL_RADIUS: float = 20.0
 const PORTAL_HEIGHT: float = 10
+const VIDEO_POOL_SIZE: int = 5
+const VIDEO_ARC_RADIUS: float = 2.5
+const VIDEO_ARC_HEIGHT: float = 1.3
+const VIDEO_ARC_HALF_ANGLE_DEG: float = 60.0
 
 
 var _pool: Array[PhotoFrame] = []
 var _portal_pool: Array[NextPhasePortal] = []
 var _note_pool: Array[NoteFrame] = []
+var _video_pool: Array[VideoFrame] = []
 var _loaded_textures: Array[ImageTexture] = []
 var _active_phase: PhaseModel = null
 var _active_photo_names: Array[String] = []
 var _active_note_count: int = 0
+var _active_video_names: Array[String] = []
 
 
 func _ready() -> void:
@@ -47,10 +54,17 @@ func _ready() -> void:
 		note_frame.deactivate()
 		_note_pool.append(note_frame)
 
+	for i: int in range(VIDEO_POOL_SIZE):
+		var video_frame: VideoFrame = VIDEO_FRAME_SCENE.instantiate() as VideoFrame
+		add_child(video_frame)
+		video_frame.deactivate()
+		_video_pool.append(video_frame)
+
 
 func load_phase(phase: PhaseModel) -> void:
 	_active_phase = phase
 	_active_photo_names.clear()
+	_active_video_names.clear()
 	var folder_path: String = phase.folder_path
 	var photo_paths: Array[String] = _scan_photos(folder_path)
 	var count: int = mini(photo_paths.size(), POOL_SIZE)
@@ -78,6 +92,7 @@ func load_phase(phase: PhaseModel) -> void:
 		active_index += 1
 
 	_load_notes(phase)
+	_load_videos(phase)
 	_load_portals(phase)
 
 
@@ -90,15 +105,19 @@ func unload_phase(do_save: bool) -> void:
 	if do_save:
 		_save_photo_positions()
 		_save_note_positions()
+		_save_video_positions()
 	for frame: PhotoFrame in _pool:
 		frame.deactivate()
 	for portal: NextPhasePortal in _portal_pool:
 		portal.deactivate()
 	for note_frame: NoteFrame in _note_pool:
 		note_frame.deactivate()
+	for video_frame: VideoFrame in _video_pool:
+		video_frame.deactivate()
 	_loaded_textures.clear()
 	_active_photo_names.clear()
 	_active_note_count = 0
+	_active_video_names.clear()
 
 
 func _load_notes(phase: PhaseModel) -> void:
@@ -121,6 +140,67 @@ func _load_notes(phase: PhaseModel) -> void:
 			note_frame.basis = Basis.looking_at(note_frame.position.normalized(), Vector3.UP)
 		note_frame.activate(notes[i])
 		_active_note_count += 1
+
+
+func _load_videos(phase: PhaseModel) -> void:
+	_active_video_names.clear()
+	var folder_path: String = phase.folder_path
+	var video_paths: Array[String] = _scan_videos(folder_path)
+	var count: int = mini(video_paths.size(), VIDEO_POOL_SIZE)
+	var saved: Dictionary = GlobalCollections.phase_repository.video_positions_dict(phase)
+	for i: int in range(count):
+		var video_path: String = video_paths[i]
+		var file_name: String = video_path.get_file()
+		_active_video_names.append(file_name)
+		var video_frame: VideoFrame = _video_pool[i]
+		if saved.has(file_name):
+			var vd: Dictionary = saved[file_name]
+			video_frame.position = _vec3_from_dict(vd.get("position", {}))
+			video_frame.rotation = _vec3_from_dict(vd.get("rotation", {}))
+			video_frame.scalable_scale = vd.get("scale", Vector3.ONE).x
+			video_frame.freeze = true
+			video_frame.video_frame_two_hand_scaler.apply_scale()
+		else:
+			video_frame.position = _video_semicircle_position(i, count)
+			video_frame.basis = Basis.looking_at(video_frame.position.normalized(), Vector3.UP)
+		video_frame.activate(video_path)
+
+
+func _save_video_positions() -> void:
+	if _active_phase == null or _active_video_names.is_empty():
+		return
+	var videos: Array = []
+	for i: int in range(_active_video_names.size()):
+		var video_frame: VideoFrame = _video_pool[i]
+		videos.append({
+			"name": _active_video_names[i],
+			"position": _vec3_to_dict(video_frame.position),
+			"rotation": _vec3_to_dict(video_frame.rotation),
+			"scale": _vec3_to_dict(Vector3.ONE * video_frame.scalable_scale),
+		})
+	GlobalCollections.phase_repository.save_video_positions(_active_phase, videos)
+
+
+func _scan_videos(folder_path: String) -> Array[String]:
+	var results: Array[String] = []
+	var dir: DirAccess = DirAccess.open(folder_path)
+	if dir == null:
+		return results
+	dir.list_dir_begin()
+	var file_name: String = dir.get_next()
+	while file_name != "" and results.size() < VIDEO_POOL_SIZE:
+		if not dir.current_is_dir():
+			if file_name.get_extension().to_lower() in PhaseRepository.VIDEO_EXTENSIONS:
+				results.append(folder_path.path_join(file_name))
+		file_name = dir.get_next()
+	dir.list_dir_end()
+	return results
+
+
+func _video_semicircle_position(index: int, total: int) -> Vector3:
+	var t: float = 0.5 if total <= 1 else float(index) / float(total - 1)
+	var angle_rad: float = deg_to_rad(lerp(-VIDEO_ARC_HALF_ANGLE_DEG, VIDEO_ARC_HALF_ANGLE_DEG, t))
+	return Vector3(VIDEO_ARC_RADIUS * sin(angle_rad), VIDEO_ARC_HEIGHT, -VIDEO_ARC_RADIUS * cos(angle_rad))
 
 
 func _save_note_positions() -> void:

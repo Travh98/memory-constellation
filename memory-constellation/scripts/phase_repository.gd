@@ -12,6 +12,8 @@ const SESSION_FILE := "user://mc_session.json"
 const POSITIONS_FILE := "phase-graph-positions.json"
 const PHOTO_EXTENSIONS := ["jpg", "jpeg", "png", "gif", "bmp", "webp", "tiff", "tif", "heic"]
 const NOTE_EXTENSIONS := ["md"]
+# Godot natively supports .ogv; .mp4/.mov require the GodotFFmpeg gdextension.
+const VIDEO_EXTENSIONS := ["ogv", "mp4", "mov", "webm", "mkv", "avi"]
 
 
 func scan_phases(mc_folder: String) -> Array[PhaseModel]:
@@ -193,6 +195,21 @@ func note_positions_dict(phase: PhaseModel) -> Dictionary:
 
 func save_note_positions(phase: PhaseModel, note_positions: Array) -> void:
 	phase.note_positions = note_positions
+	save_phase(phase)
+
+
+func video_positions_dict(phase: PhaseModel) -> Dictionary:
+	var result: Dictionary = {}
+	for entry: Variant in phase.video_positions:
+		if entry is Dictionary:
+			var n: String = (entry as Dictionary).get("name", "")
+			if not n.is_empty():
+				result[n] = entry as Dictionary
+	return result
+
+
+func save_video_positions(phase: PhaseModel, video_positions: Array) -> void:
+	phase.video_positions = video_positions
 	save_phase(phase)
 
 

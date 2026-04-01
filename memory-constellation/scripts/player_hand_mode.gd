@@ -138,6 +138,8 @@ func _get_remote_grab(frame: XRToolsPickable) -> Node:
 	var remote: Node = frame.get_node_or_null("PhotoFrameRemoteGrab")
 	if remote == null:
 		remote = frame.get_node_or_null("NoteFrameRemoteGrab")
+	if remote == null:
+		remote = frame.get_node_or_null("VideoFrameRemoteGrab")
 	return remote
 
 

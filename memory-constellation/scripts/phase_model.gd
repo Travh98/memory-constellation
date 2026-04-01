@@ -17,6 +17,7 @@ var connections: Array[String] = []
 var playlist_link: String = ""
 var photos: Array = []
 var note_positions: Array = []
+var video_positions: Array = []
 var notes: Array[NoteModel] = []
 
 
@@ -36,6 +37,9 @@ static func from_dict(d: Dictionary) -> PhaseModel:
 	for entry: Variant in (d.get("note_positions", []) as Array):
 		if entry is Dictionary:
 			p.note_positions.append(entry)
+	for entry: Variant in (d.get("video_positions", []) as Array):
+		if entry is Dictionary:
+			p.video_positions.append(entry)
 	return p
 
 
@@ -50,4 +54,5 @@ func to_dict() -> Dictionary:
 		"connections": connections,
 		"photos": photos,
 		"note_positions": note_positions,
+		"video_positions": video_positions,
 	}
