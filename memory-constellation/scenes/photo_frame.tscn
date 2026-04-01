@@ -1,58 +1,32 @@
 [gd_scene format=3 uid="uid://dvr7781dxh52q"]
 
-[ext_resource type="PackedScene" uid="uid://da2qgxxwwitl6" path="res://addons/godot-xr-tools/objects/highlight/highlight_ring.tscn" id="3_wo7jj"]
-[ext_resource type="PackedScene" uid="uid://c25yxb0vt53vc" path="res://addons/godot-xr-tools/objects/grab_points/grab_point_hand_left.tscn" id="4_60643"]
-[ext_resource type="Script" uid="uid://4sgdiqonohct" path="res://scripts/photo_frame_two_hand_scaler.gd" id="5_60643"]
-[ext_resource type="PackedScene" uid="uid://ctw7nbntd5pcj" path="res://addons/godot-xr-tools/objects/grab_points/grab_point_hand_right.tscn" id="5_m4b05"]
-[ext_resource type="Script" uid="uid://djy3dj6jh0vws" path="res://scripts/photo_frame_remote_grab.gd" id="6_m4b05"]
-[ext_resource type="Script" uid="uid://dhdljpcp8cwsp" path="res://scripts/photo_frame.gd" id="Script_pf"]
+[ext_resource type="PackedScene" uid="uid://bvf5t3r2nq8kf" path="res://scenes/base_frame.tscn" id="1_base"]
+[ext_resource type="Script" uid="uid://dhdljpcp8cwsp" path="res://scripts/photo_frame.gd" id="2_pf"]
+[ext_resource type="Script" uid="uid://4sgdiqonohct" path="res://scripts/photo_frame_two_hand_scaler.gd" id="3_pfs"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_pf"]
 size = Vector3(0.3, 0.2, 0.01)
 
-[node name="PhotoFrame" type="RigidBody3D" unique_id=1569347094]
-collision_layer = 4
-collision_mask = 196615
-freeze_mode = 1
-script = ExtResource("Script_pf")
-picked_up_layer = 65540
-release_mode = 1
-second_hand_grab = 2
+[node name="PhotoFrame" instance=ExtResource("1_base")]
+script = ExtResource("2_pf")
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="." unique_id=734642061]
+[node name="CollisionShape3D" parent="."]
 shape = SubResource("BoxShape3D_pf")
 
 [node name="Photo" type="Sprite3D" parent="." unique_id=2112978642]
 sorting_offset = 10.0
 
-[node name="HighlightRing" parent="." unique_id=8718289 instance=ExtResource("3_wo7jj")]
-
-[node name="GrabPointHandLeft" parent="." unique_id=863267380 instance=ExtResource("4_60643")]
+[node name="GrabPointHandLeft" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.11411441, 0.09247954, 0)
-visible = true
-handle = "topleft"
-mode = 1
 
-[node name="GrabPointHandRight" parent="." unique_id=511689610 instance=ExtResource("5_m4b05")]
+[node name="GrabPointHandRight" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.12919603, 0.09247954, 0)
-visible = true
-handle = "topright"
-mode = 1
 
-[node name="GrabPointHandLeft2" parent="." unique_id=148050412 instance=ExtResource("4_60643")]
+[node name="GrabPointHandLeft2" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.11411441, -0.009415418, 0)
-visible = true
-handle = "bottomleft"
-mode = 2
 
-[node name="GrabPointHandRight2" parent="." unique_id=882034836 instance=ExtResource("5_m4b05")]
+[node name="GrabPointHandRight2" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.12919603, -0.009415418, 0)
-visible = true
-handle = "bottomright"
-mode = 2
 
-[node name="PhotoFrameTwoHandScaler" type="Node" parent="." unique_id=1606995618]
-script = ExtResource("5_60643")
-
-[node name="PhotoFrameRemoteGrab" type="Node" parent="." unique_id=186595816]
-script = ExtResource("6_m4b05")
+[node name="FrameTwoHandScaler" parent="."]
+script = ExtResource("3_pfs")

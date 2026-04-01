@@ -1,11 +1,8 @@
 [gd_scene format=3 uid="uid://bv5t3r2nq8k7m"]
 
-[ext_resource type="PackedScene" uid="uid://da2qgxxwwitl6" path="res://addons/godot-xr-tools/objects/highlight/highlight_ring.tscn" id="1_hr"]
-[ext_resource type="PackedScene" uid="uid://c25yxb0vt53vc" path="res://addons/godot-xr-tools/objects/grab_points/grab_point_hand_left.tscn" id="2_gpl"]
-[ext_resource type="PackedScene" uid="uid://ctw7nbntd5pcj" path="res://addons/godot-xr-tools/objects/grab_points/grab_point_hand_right.tscn" id="3_gpr"]
-[ext_resource type="Script" path="res://scripts/video_frame.gd" id="4_vf"]
-[ext_resource type="Script" path="res://scripts/video_frame_two_hand_scaler.gd" id="5_vfs"]
-[ext_resource type="Script" path="res://scripts/video_frame_remote_grab.gd" id="6_vfr"]
+[ext_resource type="PackedScene" uid="uid://bvf5t3r2nq8kf" path="res://scenes/base_frame.tscn" id="1_base"]
+[ext_resource type="Script" path="res://scripts/video_frame.gd" id="2_vf"]
+[ext_resource type="Script" path="res://scripts/video_frame_two_hand_scaler.gd" id="3_vfs"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_vf"]
 size = Vector3(0.48, 0.27, 0.01)
@@ -24,16 +21,10 @@ albedo_texture = SubResource("ViewportTexture_vf")
 texture_filter = 1
 disable_receive_shadows = true
 
-[node name="VideoFrame" type="RigidBody3D" unique_id=1]
-collision_layer = 4
-collision_mask = 196615
-freeze_mode = 1
-script = ExtResource("4_vf")
-picked_up_layer = 65540
-release_mode = 1
-second_hand_grab = 2
+[node name="VideoFrame" instance=ExtResource("1_base")]
+script = ExtResource("2_vf")
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="." unique_id=2]
+[node name="CollisionShape3D" parent="."]
 shape = SubResource("BoxShape3D_vf")
 
 [node name="SubViewport" type="SubViewport" parent="." unique_id=3]
@@ -52,34 +43,17 @@ sorting_offset = 10.0
 mesh = SubResource("QuadMesh_vf")
 surface_material_override/0 = SubResource("StandardMaterial3D_vf")
 
-[node name="HighlightRing" parent="." unique_id=6 instance=ExtResource("1_hr")]
-
-[node name="GrabPointHandLeft" parent="." unique_id=7 instance=ExtResource("2_gpl")]
+[node name="GrabPointHandLeft" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.182, 0.124, 0)
-visible = true
-handle = "topleft"
-mode = 1
 
-[node name="GrabPointHandRight" parent="." unique_id=8 instance=ExtResource("3_gpr")]
+[node name="GrabPointHandRight" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.206, 0.124, 0)
-visible = true
-handle = "topright"
-mode = 1
 
-[node name="GrabPointHandLeft2" parent="." unique_id=9 instance=ExtResource("2_gpl")]
+[node name="GrabPointHandLeft2" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.182, -0.012, 0)
-visible = true
-handle = "bottomleft"
-mode = 2
 
-[node name="GrabPointHandRight2" parent="." unique_id=10 instance=ExtResource("3_gpr")]
+[node name="GrabPointHandRight2" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.206, -0.012, 0)
-visible = true
-handle = "bottomright"
-mode = 2
 
-[node name="VideoFrameTwoHandScaler" type="Node" parent="." unique_id=11]
-script = ExtResource("5_vfs")
-
-[node name="VideoFrameRemoteGrab" type="Node" parent="." unique_id=12]
-script = ExtResource("6_vfr")
+[node name="FrameTwoHandScaler" parent="."]
+script = ExtResource("3_vfs")

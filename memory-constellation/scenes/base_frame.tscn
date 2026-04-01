@@ -1,0 +1,55 @@
+[gd_scene format=3 uid="uid://bvf5t3r2nq8kf"]
+
+[ext_resource type="PackedScene" uid="uid://da2qgxxwwitl6" path="res://addons/godot-xr-tools/objects/highlight/highlight_ring.tscn" id="1_hr"]
+[ext_resource type="PackedScene" uid="uid://c25yxb0vt53vc" path="res://addons/godot-xr-tools/objects/grab_points/grab_point_hand_left.tscn" id="2_gpl"]
+[ext_resource type="PackedScene" uid="uid://ctw7nbntd5pcj" path="res://addons/godot-xr-tools/objects/grab_points/grab_point_hand_right.tscn" id="3_gpr"]
+[ext_resource type="Script" path="res://scripts/base_frame.gd" id="4_bf"]
+[ext_resource type="Script" path="res://scripts/base_frame_two_hand_scaler.gd" id="5_bfs"]
+[ext_resource type="Script" path="res://scripts/base_frame_remote_grab.gd" id="6_bfr"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_bf"]
+size = Vector3(0.4, 0.3, 0.01)
+
+[node name="BaseFrame" type="RigidBody3D" unique_id=1]
+collision_layer = 4
+collision_mask = 196615
+freeze_mode = 1
+script = ExtResource("4_bf")
+picked_up_layer = 65540
+release_mode = 1
+second_hand_grab = 2
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="." unique_id=2]
+shape = SubResource("BoxShape3D_bf")
+
+[node name="HighlightRing" parent="." unique_id=3 instance=ExtResource("1_hr")]
+
+[node name="GrabPointHandLeft" parent="." unique_id=4 instance=ExtResource("2_gpl")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.152, 0.138, 0)
+visible = true
+handle = "topleft"
+mode = 1
+
+[node name="GrabPointHandRight" parent="." unique_id=5 instance=ExtResource("3_gpr")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.172, 0.138, 0)
+visible = true
+handle = "topright"
+mode = 1
+
+[node name="GrabPointHandLeft2" parent="." unique_id=6 instance=ExtResource("2_gpl")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.152, -0.013, 0)
+visible = true
+handle = "bottomleft"
+mode = 2
+
+[node name="GrabPointHandRight2" parent="." unique_id=7 instance=ExtResource("3_gpr")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.172, -0.013, 0)
+visible = true
+handle = "bottomright"
+mode = 2
+
+[node name="FrameTwoHandScaler" type="Node" parent="." unique_id=8]
+script = ExtResource("5_bfs")
+
+[node name="FrameRemoteGrab" type="Node" parent="." unique_id=9]
+script = ExtResource("6_bfr")

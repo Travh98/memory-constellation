@@ -1,15 +1,15 @@
 extends Node
-class_name NoteFrameRemoteGrab
+class_name BaseFrameRemoteGrab
 
 
-## Handles remote (distance) grab for a NoteFrame.
+## Handles remote (distance) grab for any BaseFrame.
 ## Displays floating grab point indicators at each hand and lines to the frame center.
 ## Single-hand grab translates the frame. Two-hand grab translates, rotates, and scales.
 
 @export_range(0.0, 1.0, 0.01) var remote_smoothing: float = 0.04
 
-@onready var _frame: NoteFrame = $".."
-@onready var _scaler: NoteFrameTwoHandScaler = $"../NoteFrameTwoHandScaler"
+@onready var _frame: BaseFrame = $".."
+@onready var _scaler: BaseFrameTwoHandScaler = $"../FrameTwoHandScaler"
 
 var _gizmo: PlayerRemoteGrabGizmo
 

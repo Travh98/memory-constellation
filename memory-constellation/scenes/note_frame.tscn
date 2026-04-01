@@ -1,16 +1,10 @@
 [gd_scene format=3 uid="uid://ti3whtr1h2wr"]
 
-[ext_resource type="PackedScene" uid="uid://clujaf3u776a3" path="res://addons/godot-xr-tools/objects/viewport_2d_in_3d.tscn" id="1_vp"]
-[ext_resource type="PackedScene" uid="uid://da2qgxxwwitl6" path="res://addons/godot-xr-tools/objects/highlight/highlight_ring.tscn" id="2_hr"]
-[ext_resource type="PackedScene" uid="uid://c25yxb0vt53vc" path="res://addons/godot-xr-tools/objects/grab_points/grab_point_hand_left.tscn" id="3_gpl"]
-[ext_resource type="PackedScene" uid="uid://ctw7nbntd5pcj" path="res://addons/godot-xr-tools/objects/grab_points/grab_point_hand_right.tscn" id="4_gpr"]
-[ext_resource type="PackedScene" path="res://scenes/note_display.tscn" id="5_nd"]
-[ext_resource type="Script" uid="uid://c7qhtj00hocm6" path="res://scripts/note_frame.gd" id="6_nf"]
-[ext_resource type="Script" uid="uid://cwq2o224yu15m" path="res://scripts/note_frame_two_hand_scaler.gd" id="7_nfs"]
-[ext_resource type="Script" uid="uid://c8g2hv40n5ox7" path="res://scripts/note_frame_remote_grab.gd" id="8_nfr"]
-
-[sub_resource type="BoxShape3D" id="BoxShape3D_nf"]
-size = Vector3(0.4, 0.3, 0.01)
+[ext_resource type="PackedScene" uid="uid://bvf5t3r2nq8kf" path="res://scenes/base_frame.tscn" id="1_base"]
+[ext_resource type="PackedScene" uid="uid://clujaf3u776a3" path="res://addons/godot-xr-tools/objects/viewport_2d_in_3d.tscn" id="2_vp"]
+[ext_resource type="PackedScene" path="res://scenes/note_display.tscn" id="3_nd"]
+[ext_resource type="Script" uid="uid://c7qhtj00hocm6" path="res://scripts/note_frame.gd" id="4_nf"]
+[ext_resource type="Script" uid="uid://cwq2o224yu15m" path="res://scripts/note_frame_two_hand_scaler.gd" id="5_nfs"]
 
 [sub_resource type="QuadMesh" id="QuadMesh_ms4qf"]
 resource_local_to_scene = true
@@ -30,21 +24,12 @@ disable_receive_shadows = true
 resource_local_to_scene = true
 size = Vector3(0.4, 0.3, 0.02)
 
-[node name="NoteFrame" type="RigidBody3D" unique_id=1]
-collision_layer = 4
-collision_mask = 196615
-freeze_mode = 1
-script = ExtResource("6_nf")
-picked_up_layer = 65540
-release_mode = 1
-second_hand_grab = 2
+[node name="NoteFrame" instance=ExtResource("1_base")]
+script = ExtResource("4_nf")
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="." unique_id=2021211557]
-shape = SubResource("BoxShape3D_nf")
-
-[node name="Viewport2Din3D" parent="." unique_id=9233718 instance=ExtResource("1_vp")]
+[node name="Viewport2Din3D" parent="." unique_id=9233718 instance=ExtResource("2_vp")]
 screen_size = Vector2(0.4, 0.3)
-scene = ExtResource("5_nd")
+scene = ExtResource("3_nd")
 viewport_size = Vector2(800, 600)
 transparent = 0
 scene_properties_keys = PackedStringArray("note_display.gd")
@@ -65,36 +50,7 @@ viewport_size = Vector2(800, 600)
 [node name="CollisionShape3D" parent="Viewport2Din3D/StaticBody3D" index="0"]
 shape = SubResource("BoxShape3D_i2ytu")
 
-[node name="HighlightRing" parent="." unique_id=526484416 instance=ExtResource("2_hr")]
-
-[node name="GrabPointHandLeft" parent="." unique_id=1815173291 instance=ExtResource("3_gpl")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.152, 0.138, 0)
-visible = true
-handle = "topleft"
-mode = 1
-
-[node name="GrabPointHandRight" parent="." unique_id=1317999274 instance=ExtResource("4_gpr")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.172, 0.138, 0)
-visible = true
-handle = "topright"
-mode = 1
-
-[node name="GrabPointHandLeft2" parent="." unique_id=2097697677 instance=ExtResource("3_gpl")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.152, -0.013, 0)
-visible = true
-handle = "bottomleft"
-mode = 2
-
-[node name="GrabPointHandRight2" parent="." unique_id=670568688 instance=ExtResource("4_gpr")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.172, -0.013, 0)
-visible = true
-handle = "bottomright"
-mode = 2
-
-[node name="NoteFrameTwoHandScaler" type="Node" parent="." unique_id=198083518]
-script = ExtResource("7_nfs")
-
-[node name="NoteFrameRemoteGrab" type="Node" parent="." unique_id=377523355]
-script = ExtResource("8_nfr")
+[node name="FrameTwoHandScaler" parent="."]
+script = ExtResource("5_nfs")
 
 [editable path="Viewport2Din3D"]

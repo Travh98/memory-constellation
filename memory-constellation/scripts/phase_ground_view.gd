@@ -86,7 +86,7 @@ func load_phase(phase: PhaseModel) -> void:
 			frame.rotation = _vec3_from_dict(pd.get("rotation", {}))
 			frame.scalable_scale = pd.get("scale", Vector3.ONE).x
 			frame.freeze = true
-			frame.photo_frame_two_hand_scaler.apply_scale()
+			frame.frame_two_hand_scaler.apply_scale()
 		else:
 			print("Loaded photo frame with no save data")
 		active_index += 1
@@ -134,7 +134,7 @@ func _load_notes(phase: PhaseModel) -> void:
 			note_frame.rotation = _vec3_from_dict(nd.get("rotation", {}))
 			note_frame.scalable_scale = nd.get("scale", Vector3.ONE).x
 			note_frame.freeze = true
-			note_frame.note_frame_two_hand_scaler.apply_scale()
+			note_frame.frame_two_hand_scaler.apply_scale()
 		else:
 			note_frame.position = _note_semicircle_position(i, count)
 			note_frame.basis = Basis.looking_at(note_frame.position.normalized(), Vector3.UP)
@@ -159,7 +159,7 @@ func _load_videos(phase: PhaseModel) -> void:
 			video_frame.rotation = _vec3_from_dict(vd.get("rotation", {}))
 			video_frame.scalable_scale = vd.get("scale", Vector3.ONE).x
 			video_frame.freeze = true
-			video_frame.video_frame_two_hand_scaler.apply_scale()
+			video_frame.frame_two_hand_scaler.apply_scale()
 		else:
 			video_frame.position = _video_semicircle_position(i, count)
 			video_frame.basis = Basis.looking_at(video_frame.position.normalized(), Vector3.UP)

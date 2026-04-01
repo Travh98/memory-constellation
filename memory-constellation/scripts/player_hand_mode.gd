@@ -66,7 +66,7 @@ func _update_pointing(controller: XRController3D, is_left: bool) -> void:
 	if _is_actively_grabbing(not is_left):
 		var current_frame: XRToolsPickable = _left_pointed_frame if is_left else _right_pointed_frame
 		if current_frame != null:
-			var remote: Node = _get_remote_grab(current_frame)
+			var remote: BaseFrameRemoteGrab = _get_remote_grab(current_frame)
 			if remote != null:
 				remote.on_remote_hover_end(controller)
 			_set_pointer_enabled(controller, true)
@@ -83,7 +83,7 @@ func _update_pointing(controller: XRController3D, is_left: bool) -> void:
 		return
 
 	if current_frame != null:
-		var remote: Node = _get_remote_grab(current_frame)
+		var remote: BaseFrameRemoteGrab = _get_remote_grab(current_frame)
 		if remote != null:
 			remote.on_remote_hover_end(controller)
 		_set_pointer_enabled(controller, true)
@@ -94,7 +94,7 @@ func _update_pointing(controller: XRController3D, is_left: bool) -> void:
 		_right_pointed_frame = hit_frame
 
 	if hit_frame != null:
-		var remote: Node = _get_remote_grab(hit_frame)
+		var remote: BaseFrameRemoteGrab = _get_remote_grab(hit_frame)
 		if remote != null:
 			remote.on_remote_hover_start(controller)
 			remote.set_gizmo(remote_grab_gizmo)
@@ -106,7 +106,7 @@ func _clear_hand(controller: XRController3D, is_left: bool) -> void:
 	if current_frame == null:
 		return
 	var grip_held: bool = _left_grip_held if is_left else _right_grip_held
-	var remote: Node = _get_remote_grab(current_frame)
+	var remote: BaseFrameRemoteGrab = _get_remote_grab(current_frame)
 	if remote != null:
 		if grip_held:
 			remote.on_remote_grab_end(controller)
@@ -134,13 +134,11 @@ func _raycast_for_frame(controller: XRController3D) -> XRToolsPickable:
 	return result.get("collider") as XRToolsPickable
 
 
-func _get_remote_grab(frame: XRToolsPickable) -> Node:
-	var remote: Node = frame.get_node_or_null("PhotoFrameRemoteGrab")
-	if remote == null:
-		remote = frame.get_node_or_null("NoteFrameRemoteGrab")
-	if remote == null:
-		remote = frame.get_node_or_null("VideoFrameRemoteGrab")
-	return remote
+func _get_remote_grab(frame: XRToolsPickable) -> BaseFrameRemoteGrab:
+	for child: Node in frame.get_children():
+		if child is BaseFrameRemoteGrab:
+			return child as BaseFrameRemoteGrab
+	return null
 
 
 func _on_left_button_pressed(button: String) -> void:
@@ -154,13 +152,13 @@ func _on_left_button_pressed(button: String) -> void:
 	_left_grip_held = true
 	if _is_actively_grabbing(false):
 		if _left_pointed_frame != null and _left_pointed_frame != _right_pointed_frame:
-			var old_remote: Node = _get_remote_grab(_left_pointed_frame)
+			var old_remote: BaseFrameRemoteGrab = _get_remote_grab(_left_pointed_frame)
 			if old_remote != null:
 				old_remote.on_remote_hover_end(left_controller)
 			_set_pointer_enabled(left_controller, true)
 		_left_pointed_frame = _right_pointed_frame
 	if _left_pointed_frame != null:
-		var remote: Node = _get_remote_grab(_left_pointed_frame)
+		var remote: BaseFrameRemoteGrab = _get_remote_grab(_left_pointed_frame)
 		if remote != null:
 			remote.on_remote_grab_start(left_controller)
 			remote_grab_started.emit(left_controller, _compute_ray_endpoint(left_controller, _left_pointed_frame))
@@ -172,7 +170,7 @@ func _on_left_button_released(button: String) -> void:
 		return
 	_left_grip_held = false
 	if _left_pointed_frame != null:
-		var remote: Node = _get_remote_grab(_left_pointed_frame)
+		var remote: BaseFrameRemoteGrab = _get_remote_grab(_left_pointed_frame)
 		if remote != null:
 			remote.on_remote_grab_end(left_controller)
 			remote_grab_ended.emit(left_controller)
@@ -189,13 +187,13 @@ func _on_right_button_pressed(button: String) -> void:
 	_right_grip_held = true
 	if _is_actively_grabbing(true):
 		if _right_pointed_frame != null and _right_pointed_frame != _left_pointed_frame:
-			var old_remote: Node = _get_remote_grab(_right_pointed_frame)
+			var old_remote: BaseFrameRemoteGrab = _get_remote_grab(_right_pointed_frame)
 			if old_remote != null:
 				old_remote.on_remote_hover_end(right_controller)
 			_set_pointer_enabled(right_controller, true)
 		_right_pointed_frame = _left_pointed_frame
 	if _right_pointed_frame != null:
-		var remote: Node = _get_remote_grab(_right_pointed_frame)
+		var remote: BaseFrameRemoteGrab = _get_remote_grab(_right_pointed_frame)
 		if remote != null:
 			remote.on_remote_grab_start(right_controller)
 			remote_grab_started.emit(right_controller, _compute_ray_endpoint(right_controller, _right_pointed_frame))
@@ -207,7 +205,7 @@ func _on_right_button_released(button: String) -> void:
 		return
 	_right_grip_held = false
 	if _right_pointed_frame != null:
-		var remote: Node = _get_remote_grab(_right_pointed_frame)
+		var remote: BaseFrameRemoteGrab = _get_remote_grab(_right_pointed_frame)
 		if remote != null:
 			remote.on_remote_grab_end(right_controller)
 			remote_grab_ended.emit(right_controller)
